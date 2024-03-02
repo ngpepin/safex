@@ -70,8 +70,6 @@ namespace safex
             return (min, max, isParmPresent);
         }
 
-
-
         public static (int ParmNumMin, int ParmNumMax, string[] FilledArguments) FillArguments(string input, string[] args)
         {
             var (ParmNumMin, ParmNumMax, IsParmPresent) = AnalyzeStringForParams(input);
@@ -115,31 +113,48 @@ namespace safex
 
             int numArgs = args.Length;
 
-            if (numArgs < 2)
+            if (numArgs == 0)
             {
                 Console.WriteLine("Provides a safe way to do the equivalent of bash parameter expansion without the risk of uninteded side-effects/");
+                Console.WriteLine("Can also be used to rearrange parameter orders to allow aliasing.");
                 Console.WriteLine("");
-                Console.WriteLine("  Usage: safex variableName templateString value1 [value2...]");
+                Console.WriteLine("  Usage: safex templateString value1 [value2...]");
                 Console.WriteLine("");
                 Console.WriteLine(@"   Example with two parameters and special characters:");
-                Console.WriteLine(@"      output =$(./ safex mysentence $'My dog\'s name is {0} and my cat\'s name is {1}' 'Fido' 'Whiskers')");
+                Console.WriteLine(@"      output =$(./ safex $'My dog\'s name is {0} and my cat\'s name is {1}' 'Fido' 'Whiskers')");
                 Console.WriteLine("       eval \"$output\"");
-                Console.WriteLine("       echo \"$mysentence\"");
+                Console.WriteLine("");    
                 Console.WriteLine("");
                 Console.WriteLine(@"   Example with three parameters, special characters, and the need for complex escaping:");
-                Console.WriteLine(@"      output =$(./ safex anotherSentence $'Here are the names: {0}, {1}, and {2}' 'Fido' 'Whiskers' 'Tweety')");
+                Console.WriteLine(@"      output =$(./ safex $'Here are the names: {0}, {1}, and {2}' 'Fido' 'Whiskers' 'Tweety')");
                 Console.WriteLine("       eval \"$output\"");
-                Console.WriteLine("       echo \"$mysentence\"");
+                Console.WriteLine("");    
                 Console.WriteLine("");
                 Console.WriteLine(@"   Example using variables:");
-                Console.WriteLine("       output =$(./ safex \"mysentence\" \"$template\" \"$param1\" \"$param2\"");
+                Console.WriteLine("       output =$(./ safex \"$template\" \"$param1\" \"$param2\"");
                 Console.WriteLine("       eval \"$output\"");
-                Console.WriteLine("       echo \"$mysentence\"");
+                Console.WriteLine("");
+                Console.WriteLine("    To execute the retrned string:");
+                Console.WriteLine("       local temp_file =$(mktemp)");
+                Console.WriteLine("       usr/bin/ safex \"${args[@]}\" > temp_file");
+                Console.WriteLine("       echo -en \"executing: \"; cat temp_file\"; echo");
+                Console.WriteLine("       sudo /usr/bin/unbuffer bash -c 'USER=root; ' \"$(cat temp_file)\" | more");
+
+
+                //      
+                /// usr / bin / safex "${args[@]}" > temp_file
+                //echo - en "${BLUE}${ITALICS}executing: "
+                //cat temp_file
+                //echo - en "$NC"
+                //sudo / usr / bin / unbuffer bash - c 'USER=root; '"$(cat temp_file)" | more
+
+
                 Console.WriteLine("");
                 return 1;
             }
 
             string templateString = args[0];
+           // string[] commandLineArgs = args.Length > 1 ? args[1..] : new string[0];
             string[] commandLineArgs = args.Length > 1 ? args[1..] : new string[0];
             var (ParmNumMin, ParmNumMax, filledArguments) = FillArguments(templateString, commandLineArgs);
 
