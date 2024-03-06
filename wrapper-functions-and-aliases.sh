@@ -9,15 +9,15 @@
 #
 alias lnew='ssbxp "if [[ \"{1}\" == \"<nil>\" ]]; then myp1=\".\"; else myp1=\"{1}\"; fi; find \"\$myp1\" -maxdepth 3 -type f -printf \"%T+ %p\n\" | sort -r | head -n 100 | sed \"s/\.[^ ]* / /\""'
 
-# 2. Provides compact and colourful list of processes that are listening to ports and what those ports are
-# Usage: listen?
+# 2. Recursively finds text content using rip-grep, improving useability
+# Usage: findc <search-text> [<file-type>] [<lines-to-display>]\
 #
-alias listen?="sudo ss -tuln4p | grep LISTEN --color=always | awk '{print \$5, \$1, \$7}' | sed 's/:/ /' | sort -n -k 2 | sed 's/users:(//g' | sed 's/)//g' | sed 's/\"//g' | sed 's/(//g' | awk '{printf \"%-20s %-10s \033[31m%-20s\033[0m \033[94m%s\033[0m\\n\", \$1, \$2, \$3, \$4}' | column -t"
+alias findc='ssbxp "p0=\"{1}\"; if [[ \"{2}\" =~ ^-?[0-9]+$ ]]; then p1=\"\"; p2=\"{2}\"; else p1=\"{2}\"; p2=\"{3}\"; fi; cs=\"\"; if [[ -n \"\$p2\" ]]; then cs=\"-C \$p2 \"; else cs=\"-l\"; fi; if [[ -n \"\$p1\" ]]; then cs2=\"-t \$p1\"; else cs2=\"\"; fi;eval \"/home/npepin/.local/bin/rg \"\\\"{1}\"\\\" \$cs \$cs2\""'
 
 # 3. Lists running processes in compact form.\n   Usage: procs [match] where [match] is an optional match string
 # Usage: procs [<matchstr>]
 #
-procs="ssbx 'echo -e \"\033[1;92mOWNER\tPID\tCPU\tNAME\033[0m\"; if [[ \"{2}\" != \"<nil>\" ]]; then ps aux | grep \"{2}\" | grep -v \"grep\" | sed \"s/ \+/\	/g\" | cut -d \"	\" -f 4-10,13- --complement --output-delimiter=\"	\" | sed {1} | sed {1} | cut -c1-100 | grep --color=always \"{2}\"; else ps aux | grep -v \"grep\" | sed \"s/ \+/\	/g\" | cut -d \"	\" -f 4-10,13- --complement --output-delimiter=\"	\" | sed {1} | sed {1} | cut -c1-100 | more;fi' '\"s/\(	[^	]*\)\{4\}	/\1\1\1 /\"'"
+alias procs="ssbx 'echo -e \"\033[1;92mOWNER\tPID\tCPU\tNAME\033[0m\"; if [[ \"{2}\" != \"<nil>\" ]]; then ps aux | grep \"{2}\" | grep -v \"grep\" | sed \"s/ \+/\	/g\" | cut -d \"	\" -f 4-10,13- --complement --output-delimiter=\"	\" | sed {1} | sed {1} | cut -c1-100 | grep --color=always \"{2}\"; else ps aux | grep -v \"grep\" | sed \"s/ \+/\	/g\" | cut -d \"	\" -f 4-10,13- --complement --output-delimiter=\"	\" | sed {1} | sed {1} | cut -c1-100 | more;fi' '\"s/\(	[^	]*\)\{4\}	/\1\1\1 /\"'"
 
 # WRAPPER FUNCTIONS :
 
