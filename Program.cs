@@ -7,40 +7,6 @@ namespace safex
     class Program
     {
 
-        //public static (int, int) FindMinMaxParmNums(string my_str)
-        //{
-        //    // Regular expression to match numbers between curly brackets
-        //    Regex regex = new Regex(@"\{(\d+)\}");
-        //    MatchCollection matches = regex.Matches(my_str);
-
-        //    if (matches.Count == 0)
-        //    {
-        //        // Return -1 if there are no matches
-        //        return (-1,-1);
-        //    }
-
-        //    int maxVal = int.MinValue;
-        //    int minVal = int.MaxValue;
-
-        //    foreach (Match match in matches)
-        //    {
-        //        // Extract the number from each match and convert it to an integer
-        //        int num = int.Parse(match.Groups[1].Value);
-
-        //        // Update maxVal if the current number is greater
-        //        if (num > maxVal)
-        //        {
-        //            maxVal = num;
-        //        }
-        //        if (num < minVal)
-        //        {
-        //            minVal = num;
-        //        }
-        //    }
-
-        //    return (minVal, maxVal);
-        //}
-
         public static (int ParmNumMin, int ParmNumMax, bool[] IsParmPresent) AnalyzeStringForParams(string input)
         {
             Regex regex = new Regex(@"\{(\d+)\}");
@@ -115,12 +81,26 @@ namespace safex
 
             if (numArgs == 0)
             {
-                Console.WriteLine("Provides a safe way to do the equivalent of bash parameter expansion without the risk of uninteded side-effects/");
-                Console.WriteLine("Can also be used to rearrange parameter orders to allow aliasing.");
+                Console.WriteLine(@"Safex provides a safe way to do the equivalent of bash parameter expansion without the risk of undesired interpretation by the shell of string contents.");
                 Console.WriteLine("");
+                Console.WriteLine(@"- It essentially allows literals to be injected into literals (avoiding altogether the need for double quoting), and thus reduces the need to escape and take other convoluted");
+                Console.WriteLine(@"precautions in order to protect text from interference by the shell. This is why the word "safe" appears in the name: in this case it means 'safe from interpretation'");
+                Console.WriteLine(@"by the shell causing wayward expansions, variable and command substitutions, globbing, brace expansions, tilde expansions, case modification, etc.");
+                Console.WriteLine("");
+                Console.WriteLine(@"- Safex makes string manipulation and parameter passing more similar to the dominant paradigm used in programming languages. It follows the familiar"); 
+                Console.WriteLine(@"'<Template with Embedded Arguments Placeholders {1} {2} {3}>', '<Value of Argument {1}>', '<Value of {2}>', '<Value of {3}>'...'");
+                Console.WriteLine(@"pattern seen in C#'s 'Console.WriteLine' and common to many proramming languages.");
+                Console.WriteLine("");              
+                Console.WriteLine(@"- Safex can also be used to rearrange the order of parameters to allow more frequent use of bash aliases, especially when expressions require");  
+                Console.WriteLine(@"that the text or parameters provided after alias (i.e., 'myalias <myarg> <mytext>') be located somewhere else than at the very end of the line.");
+                Console.WriteLine("");       
+                Console.WriteLine(@"- Note that more recent versions of Safex can return an eval command string that is executed by a bash wrapper function withing a bash script."); 
+                Console.WriteLine(@"This is quite powerful, though clearly not at all 'safe'! Much of the documentation herein needs to be updated to reflect this change (which");
+                Console.WriteLine(@"should be controlled by a command line switch to make the behaviour optional).");
+                Console.WriteLine("");    
                 Console.WriteLine("  Usage: safex templateString value1 [value2...]");
                 Console.WriteLine("");
-                Console.WriteLine(@"   Example with two parameters and special characters:");
+                Console.WriteLine(@" Example with two parameters and special characters:");
                 Console.WriteLine(@"      output =$(./ safex $'My dog\'s name is {0} and my cat\'s name is {1}' 'Fido' 'Whiskers')");
                 Console.WriteLine("       eval \"$output\"");
                 Console.WriteLine("");    
@@ -134,21 +114,11 @@ namespace safex
                 Console.WriteLine("       output =$(./ safex \"$template\" \"$param1\" \"$param2\"");
                 Console.WriteLine("       eval \"$output\"");
                 Console.WriteLine("");
-                Console.WriteLine("    To execute the retrned string:");
+                Console.WriteLine("    To execute the returned string:");
                 Console.WriteLine("       local temp_file =$(mktemp)");
                 Console.WriteLine("       usr/bin/ safex \"${args[@]}\" > temp_file");
                 Console.WriteLine("       echo -en \"executing: \"; cat temp_file\"; echo");
                 Console.WriteLine("       sudo /usr/bin/unbuffer bash -c 'USER=root; ' \"$(cat temp_file)\" | more");
-
-
-                //      
-                /// usr / bin / safex "${args[@]}" > temp_file
-                //echo - en "${BLUE}${ITALICS}executing: "
-                //cat temp_file
-                //echo - en "$NC"
-                //sudo / usr / bin / unbuffer bash - c 'USER=root; '"$(cat temp_file)" | more
-
-
                 Console.WriteLine("");
                 return 1;
             }
