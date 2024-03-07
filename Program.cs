@@ -86,7 +86,7 @@ namespace safex
             string[] filledArguments = new string[ParmNumMax + 1]; // Ensure size to cover all indices up to ParmNumMax
             for (int i = 0; i <= ParmNumMax; i++)
             {
-                filledArguments[i] = ""; // Initialize with null or empty string
+                filledArguments[i] = "<nil>"; // Initialize with null or empty string
             }
 
 
